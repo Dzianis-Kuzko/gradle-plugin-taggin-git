@@ -1,0 +1,28 @@
+plugins {
+    id 'groovy'
+    id 'java-gradle-plugin'
+    id 'maven-publish'
+}
+
+group = 'ru.clevertec.plugin'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.apache.groovy:groovy:4.0.14'
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+gradlePlugin {
+    plugins {
+        taggingBrunch {
+            id = 'ru.clevertec.plugin.taggingBrunch'
+            implementationClass = 'ru.clevertec.plugin.TaggingBrunchPlugin'
+        }
+    }
+}
+
