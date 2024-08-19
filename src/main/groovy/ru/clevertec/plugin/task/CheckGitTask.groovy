@@ -2,21 +2,19 @@ package ru.clevertec.plugin.task
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
+import ru.clevertec.plugin.exception.NotUnderGitControlException
+import ru.clevertec.plugin.service.GitService
 
 class CheckGitTask extends DefaultTask {
+    private GitService gitService = new GitService();
 
     @TaskAction
-    void checkGitRepo() {
-        if (isGitRepo()) {
+    void checkGit() {
+        if (gitService.isUnderGitControl()) {
             println "Git is being used in this project."
         } else {
-            println "This project is not under Git version control."
+            throw new NotUnderGitControlException("This project is not under Git control.");
         }
     }
 
-    private boolean isGitRepo() {
-        project.gitInfo.hasGit = project.file('.git').exists()
-
-        return project.gitInfo.hasGit
-    }
 }

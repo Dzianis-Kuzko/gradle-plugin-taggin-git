@@ -2,27 +2,26 @@ package ru.clevertec.plugin.task
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
+import ru.clevertec.plugin.exception.UncommittedChangesException
+import ru.clevertec.plugin.service.FileService
+import ru.clevertec.plugin.service.GitService
 
 class CheckUncommittedChangesTask extends DefaultTask {
     public static final String FILE_NAME = "uncommitted_changes.log"
     public static final String POSTFIX = ".uncommitted"
 
+    private GitService gitService = new GitService()
+    private FileService fileService = new FileService()
+
     @TaskAction
-    void hasUncompletedChanges() {
-        String result = 'git status -s -uno'.execute().text.trim()
+    void hasUncommittedChanges() {
+        String uncommittedChanges = gitService.getUncommittedChanges()
 
-        boolean hasUncommittedChanges = false
-
-        if (result != "") {
-
-            try (FileWriter writer = new FileWriter(FILE_NAME)) {
-                writer.write(project.gitInfo.currentVersion + POSTFIX)
-            }
-            hasUncommittedChanges = true
+        if (!uncommittedChanges.isEmpty()) {
+            fileService.writeToFile(FILE_NAME, project.gitInfo.currentVersion + POSTFIX)
+            throw new UncommittedChangesException("There are uncommitted changes. See " + FILE_NAME)
         }
 
-        project.gitInfo.hasUncommittedChanges = hasUncommittedChanges
-
-        println(hasUncommittedChanges)
+        println("There are no uncommitted changes")
     }
 }

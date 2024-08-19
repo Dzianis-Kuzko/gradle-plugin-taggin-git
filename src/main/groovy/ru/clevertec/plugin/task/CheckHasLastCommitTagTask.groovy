@@ -2,18 +2,20 @@ package ru.clevertec.plugin.task
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
+import ru.clevertec.plugin.exception.LastCommitHasTagException
+import ru.clevertec.plugin.service.GitService
 
 class CheckHasLastCommitTagTask extends DefaultTask {
+    private GitService gitService = new GitService();
+
     @TaskAction
     void hasTag() {
-        boolean hasTag = false;
-        String tag = 'git describe --tags --exact-match'.execute().text.trim();
+        String tag = gitService.getLastCommitTag();
 
-        if (tag != "") {
-            hasTag = true
+        if (!tag.isEmpty()) {
+            throw  new LastCommitHasTagException("The last commit has a tag: " + tag)
         }
 
-        project.gitInfo.hasTag = hasTag
-        println(hasTag)
+        println("The last commit does not have a tag")
     }
 }

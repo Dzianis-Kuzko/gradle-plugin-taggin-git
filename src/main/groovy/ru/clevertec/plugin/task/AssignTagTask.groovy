@@ -2,14 +2,17 @@ package ru.clevertec.plugin.task
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
+import ru.clevertec.plugin.service.GitService
 
 class AssignTagTask extends DefaultTask {
+    private GitService gitService = new GitService()
+
     @TaskAction
     void assignTag() {
-        ('git tag ' + project.gitInfo.currentVersion).execute()
+        String tag = project.gitInfo.currentVersion
 
-        project.gitInfo.isTagAssigned==true
+        gitService.assignTag(tag)
 
-        println('The tag has been assigned: ' + project.gitInfo.currentVersion)
+        println('The tag has been assigned: ' + tag)
     }
 }

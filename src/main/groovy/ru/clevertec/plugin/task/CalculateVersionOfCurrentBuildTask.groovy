@@ -23,7 +23,7 @@ class CalculateVersionOfCurrentBuildTask extends DefaultTask {
         int major = 0
         int minor = 0
 
-        if (lastTag != "") {
+        if (!lastTag.isEmpty()) {
             lastTag = lastTag.replaceAll("[v\\-rcSNAPSHOT]", "")
             String[] parts = lastTag.split("\\.");
             major = Integer.parseInt(parts[0])
